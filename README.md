@@ -16,6 +16,28 @@ Then activate the project's environment with:
 poetry shell
 ```
 
+## Deploying the stack
+
+To deploy the stack, run:
+
+```bash
+cdk deploy
+```
+
+You check it worked by taking the output URL and running:
+
+```bash
+curl <output-url>
+```
+
+## Destroying the stack
+
+To destroy the stack, run:
+
+```bash
+cdk destroy
+```
+
 ## Useful commands
 
 - `cdk ls` list all stacks in the app
