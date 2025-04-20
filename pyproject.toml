@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "my-first-python-stack"
+version = "0.1.0"
+description = ""
+authors = ["Connor Skelland <34070858+Connor56@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aws-cdk-lib = "2.171.1"
+constructs = ">=10.0.0,<11.0.0"
+requests = "^2.32.3"
+jupyter = "^1.1.1"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "6.2.5"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
