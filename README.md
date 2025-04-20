@@ -1,4 +1,4 @@
-# Welcome to the Simplest Python Lambda Stack!
+# The Simplest Python Lambda Stack!
 
 This is a basic project for CDK development with Python. It includes a single Python Lambda function, in a basic stack.
 
