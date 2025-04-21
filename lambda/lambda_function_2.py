@@ -11,10 +11,8 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     :return: dict,
     """
 
-    body = {"message": "Hello Lambda the 3rd!"}
-
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(body),
+        "body": json.dumps({"message": "Hello, this is Lambda 2!"}),
     }
