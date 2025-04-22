@@ -1,5 +1,10 @@
 import json
 from typing import Dict, Any
+import boto3
+import os
+
+# Set up the client to communicate with AWS and the other Lambda function
+client = boto3.client("lambda")
 
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -11,10 +16,28 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     :return: dict,
     """
 
-    body = {"message": "Hello Lambda!"}
+    body = json.loads(event["body"])
+
+    # Standard Response
+    if "calledBy" in body:
+        return {
+            "statusCode": 200,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"message": f"Hello, {body['calledBy']}!"}),
+        }
+
+    # Call secondary Lambda function to get response
+    response = client.invoke(
+        FunctionName=os.environ["PEER_FN_ARN"],
+        InvocationType="RequestResponse",
+        Payload=json.dumps({"calledBy": "MyFunction"}),
+    )
+
+    # Parse secondary Lambda function's response
+    result = json.loads(response["Payload"].read())
 
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps(body),
+        "body": json.dumps(result),
     }
