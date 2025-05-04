@@ -5,6 +5,7 @@ import os
 
 # Set up the client to communicate with AWS and the other Lambda function
 client = boto3.client("lambda")
+ssm = boto3.client("ssm")
 
 
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
@@ -30,11 +31,19 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     response = client.invoke(
         FunctionName=os.environ["PEER_FN_ARN"],
         InvocationType="RequestResponse",
-        Payload=json.dumps({"calledBy": "MyFunction"}),
+        Payload=json.dumps(
+            {
+                "calledBy": "MyFunction",
+            }
+        ),
     )
 
     # Parse secondary Lambda function's response
     result = json.loads(response["Payload"].read())
+
+    some_random_key = ssm.get_parameter(Name="SomeRandomKey")
+
+    result["some_random_key"] = some_random_key["Parameter"]["Value"]
 
     return {
         "statusCode": 200,
