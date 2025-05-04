@@ -1,10 +1,15 @@
 from aws_cdk import (
     Stack,
     aws_lambda as _lambda,
+    aws_ssm as ssm,
     aws_iam as iam,
     CfnOutput,
 )
 from constructs import Construct
+import os
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 
 class MyFirstPythonStackStack(Stack):
@@ -33,6 +38,18 @@ class MyFirstPythonStackStack(Stack):
                 allowed_headers=["*"],
             ),
         )
+
+        # Create a parameter store secret
+        secret = ssm.StringParameter(
+            self,
+            id="SomeRandomKey",
+            parameter_name="SomeRandomKey",
+            description="A random key to test",
+            string_value=os.getenv("SomeRandomKey"),
+        )
+
+        # Grent read access to the first function
+        secret.grant_read(fn)
 
         # Create a function
         fn2 = _lambda.Function(
