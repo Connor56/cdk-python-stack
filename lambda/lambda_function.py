@@ -2,6 +2,7 @@ import json
 from typing import Dict, Any
 import boto3
 import os
+import numpy as np
 
 # Set up the client to communicate with AWS and the other Lambda function
 client = boto3.client("lambda")
@@ -40,6 +41,12 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
     # Parse secondary Lambda function's response
     result = json.loads(response["Payload"].read())
+
+    numpy_array = np.array([1, 2, 3])
+    dot_product = numpy_array @ numpy_array
+
+    result["numpy_array"] = numpy_array.tolist()
+    result["dot_product"] = int(dot_product)
 
     some_random_key = ssm.get_parameter(Name="SomeRandomKey")
 
