@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_ssm as ssm,
     aws_iam as iam,
     CfnOutput,
+    BundlingOptions,
 )
 from constructs import Construct
 import os
@@ -21,6 +22,25 @@ class MyFirstPythonStackStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        numpy_layer = _lambda.LayerVersion(
+            self,
+            "NumpyLayer",
+            code=_lambda.Code.from_asset(
+                "layer",
+                bundling=BundlingOptions(
+                    image=_lambda.Runtime.PYTHON_3_11.bundling_image,
+                    command=[
+                        "bash",
+                        "-c",
+                        "pip install -r requirements.txt -t /asset-output/python && "
+                        "cp -r . /asset-output",
+                    ],
+                ),
+            ),
+            compatible_runtimes=[_lambda.Runtime.PYTHON_3_11],
+            description="A layer to add Numpy to the Lambda function",
+        )
+
         # Create a function
         fn = _lambda.Function(
             self,
@@ -28,6 +48,7 @@ class MyFirstPythonStackStack(Stack):
             runtime=_lambda.Runtime.PYTHON_3_11,
             code=_lambda.Code.from_asset("lambda"),
             handler="lambda_function.lambda_handler",
+            layers=[numpy_layer],
         )
 
         fn_url = fn.add_function_url(
