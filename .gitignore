@@ -9,4 +9,6 @@ __pycache__
 .cdk.staging
 cdk.out
 
+# Environment and dev files
 *.env
+.grabit
