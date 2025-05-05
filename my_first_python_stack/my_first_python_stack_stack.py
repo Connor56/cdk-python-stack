@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_ssm as ssm,
     aws_iam as iam,
     CfnOutput,
+    BundlingOptions,
 )
 from constructs import Construct
 import os
@@ -26,7 +27,19 @@ class MyFirstPythonStackStack(Stack):
             self,
             "MyFunction",
             runtime=_lambda.Runtime.PYTHON_3_11,
-            code=_lambda.Code.from_asset("lambda"),
+            code=_lambda.Code.from_asset(
+                "lambda",
+                bundling=BundlingOptions(
+                    image=_lambda.Runtime.PYTHON_3_11.bundling_image,
+                    command=[
+                        "bash",
+                        "-c",
+                        # install into /asset-output and copy your code
+                        "pip install -r requirements.txt -t /asset-output && "
+                        "cp -ru . /asset-output",
+                    ],
+                ),
+            ),
             handler="lambda_function.lambda_handler",
         )
 
